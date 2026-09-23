@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071a2f">
+  <meta name="description" content="Ladders-of-Thought trains stronger small language models with progressively simplified reasoning traces and a self-evolving curriculum.">
+  <title>Ladders of Thought — Self-Evolving Reasoning Curricula</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23071a2f'/%3E%3Cpath d='M18 15v34M46 15v34M18 23h28M18 32h28M18 41h28' stroke='%2369d39b' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="topbar" id="top">
+    <div class="nav-shell">
+      <a class="brand" href="#top" aria-label="Ladders of Thought home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>LoT</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#approach">Approach</a>
+        <a href="#results">Results</a>
+        <a href="#citation">Citation</a>
+      </nav>
+      <a class="nav-paper" href="https://arxiv.org/abs/2609.25643" target="_blank" rel="noreferrer">Read paper <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero section-shell">
+      <div class="hero-copy">
+        <p class="eyebrow"><span></span> arXiv preprint · September 2026</p>
+        <h1>Ladders <em>of</em> Thought</h1>
+        <p class="subtitle">A Self-Evolving Curriculum of Progressively Simplified Reasoning Traces</p>
+        <div class="authors" aria-label="Authors">
+          <a href="https://minghui-liu.github.io/" target="_blank" rel="noreferrer">Minghui Liu</a>
+          <a href="https://tmagelinski.github.io/" target="_blank" rel="noreferrer">Thomas Magelinski</a>
+          <a href="https://dhyuan99.github.io/" target="_blank" rel="noreferrer">Dehao Yuan</a>
+          <span>Qi Yu</span>
+          <a href="https://furong-huang.com/" target="_blank" rel="noreferrer">Furong Huang</a>
+        </div>
+        <p class="affiliations">University of Maryland, College Park · Capital One</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="https://arxiv.org/pdf/2609.25643" target="_blank" rel="noreferrer">
+            <span class="button-icon" aria-hidden="true">▱</span> Paper
+          </a>
+          <a class="button button-secondary" href="#citation">
+            <span class="button-icon" aria-hidden="true">“</span> BibTeX
+          </a>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="tldr-band">
+      <div class="section-shell tldr-grid">
+        <p class="section-kicker">TL;DR</p>
+        <p>LoT turns each reasoning problem into a ladder of faithful, progressively easier variants—then uses a bandit scheduler to adapt the training mix as the student learns.</p>
+      </div>
+    </section>
+
+    <section class="stats section-shell" aria-label="Key results">
+      <article><strong>+32.1<small>pp</small></strong><span>AddSub over CoT KD<br>with OPT-2.7B</span></article>
+      <article><strong>+25.2<small>pp</small></strong><span>StrategyQA over CoT KD<br>with OPT-1.3B</span></article>
+      <article><strong>1–8B</strong><span>Student models tested<br>across four model families</span></article>
+      <article><strong>3–8<small>%</small></strong><span>Training-time overhead<br>from the adaptive scheduler</span></article>
+    </section>
+
+    <section class="content-section section-shell" id="approach">
+      <div class="section-heading">
+        <p class="section-kicker">The challenge</p>
+        <h2>Small models need a gentler climb.</h2>
+        <p>Knowledge distillation gives smaller language models expert traces, but not always the learning path needed to absorb them. The gap between teacher and student can leave brittle shortcuts instead of transferable reasoning.</p>
+      </div>
+
+      <div class="figure-card feature-figure">
+        <img src="assets/framework-overview.png" alt="Overview of LoT: progressive simplification, difficulty bucketing, and multi-armed-bandit sampling" width="1800" height="963">
+        <div class="figure-caption">
+          <span>Figure 1</span>
+          <p>LoT rewrites a problem into successively easier forms, groups examples by minimal reasoning depth, and lets an adaptive scheduler choose the most useful level throughout training.</p>
+        </div>
+      </div>
+
+      <div class="method-grid">
+        <article class="method-card">
+          <span class="method-number">01</span>
+          <h3>Progressive rewrites</h3>
+          <p>Replace premises used in one reasoning step with their logically entailed conclusion. Each rewrite preserves the task and answer while reducing the remaining inferential depth.</p>
+        </article>
+        <article class="method-card">
+          <span class="method-number">02</span>
+          <h3>Step-based difficulty</h3>
+          <p>Estimate difficulty with the minimal number of reasoning steps—not surface length—then organize examples into easy, medium, and hard buckets.</p>
+        </article>
+        <article class="method-card">
+          <span class="method-number">03</span>
+          <h3>Self-evolving curriculum</h3>
+          <p>Treat each bucket as a bandit arm. Validation gains become rewards, shifting the training distribution toward the levels producing the most learning progress.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="rewrite-section">
+      <div class="section-shell split-section">
+        <div class="split-copy">
+          <p class="section-kicker">Progressive simplification</p>
+          <h2>The same problem, one step closer.</h2>
+          <p>LoT does not decompose a task into unrelated subproblems. It progressively replaces already-resolved premises with intermediate conclusions, keeping the original problem identity intact.</p>
+          <ul class="check-list">
+            <li><span>✓</span> Semantically faithful rewrites</li>
+            <li><span>✓</span> No answer leakage</li>
+            <li><span>✓</span> Interpretable, monotonic difficulty</li>
+          </ul>
+        </div>
+        <figure class="plain-figure">
+          <img src="assets/progressive-rewrites.png" alt="A notebook and pen word problem rewritten across four progressively easier stages" width="1800" height="835">
+          <figcaption>Each rewrite reduces the number of remaining reasoning steps while preserving solvability.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="content-section section-shell" id="results">
+      <div class="section-heading compact">
+        <p class="section-kicker">Results</p>
+        <h2>Better transfer, not just better memorization.</h2>
+        <p>Across math and multi-hop reasoning, the largest gains appear on out-of-distribution tasks that depend on compositional inference.</p>
+      </div>
+
+      <div class="result-callouts">
+        <article>
+          <span class="result-tag">Arithmetic</span>
+          <strong>8.26 <i>→</i> 40.37</strong>
+          <p>AddSub pass@5 for OPT-2.7B: a 32.11-point gain over standard CoT distillation.</p>
+        </article>
+        <article>
+          <span class="result-tag">Multi-hop</span>
+          <strong>22.6 <i>→</i> 47.8</strong>
+          <p>StrategyQA pass@5 for OPT-1.3B: a 25.2-point gain over standard CoT distillation.</p>
+        </article>
+        <article>
+          <span class="result-tag">Larger students</span>
+          <strong>25.69 <i>→</i> 56.88</strong>
+          <p>AddSub pass@5 for Llama 3.1–8B: the gains persist as student scale increases.</p>
+        </article>
+      </div>
+
+      <div class="chart-grid">
+        <figure class="figure-card chart-card">
+          <img src="assets/validation-accuracy.png" alt="GSM8K validation accuracy over training steps for four curriculum strategies" width="1800" height="1400">
+          <figcaption><strong>Faster learning.</strong> Self-evolving sampling reaches high validation accuracy early and remains competitive through training.</figcaption>
+        </figure>
+        <figure class="figure-card chart-card">
+          <img src="assets/curriculum-comparison.png" alt="Average math accuracy for flat, easy-to-hard, hard-to-easy, and self-evolving curricula" width="1800" height="1350">
+          <figcaption><strong>Best final average.</strong> Self-evolving sampling reaches 42.55% across math benchmarks, ahead of fixed curricula.</figcaption>
+        </figure>
+      </div>
+
+      <aside class="takeaway">
+        <div class="takeaway-mark" aria-hidden="true">↗</div>
+        <div>
+          <p class="section-kicker">What the ablations reveal</p>
+          <h3>Adaptivity matters—and more simplification is not always better.</h3>
+          <p>Shallow-to-intermediate rewrite depths improve generalization, while including every trivialized variant can dilute the reasoning signal. The strongest recipe uses a moderate ladder and adapts exposure over time.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="scope-section">
+      <div class="section-shell scope-grid">
+        <div>
+          <p class="section-kicker">Experimental scope</p>
+          <h2>Two domains.<br>Ten benchmarks.</h2>
+        </div>
+        <div class="domain-card">
+          <span class="domain-icon">∑</span>
+          <div>
+            <h3>Math reasoning</h3>
+            <p>Train on GSM8K; evaluate on GSM8K, AddSub, ASDiv, MultiArith, and SVAMP.</p>
+          </div>
+        </div>
+        <div class="domain-card">
+          <span class="domain-icon">∴</span>
+          <div>
+            <h3>Multi-hop reasoning</h3>
+            <p>Train on EntailmentBank; evaluate on EntailmentBank, QASC, OpenBookQA, StrategyQA, and MuSiQue.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="citation-section section-shell" id="citation">
+      <div class="citation-heading">
+        <div>
+          <p class="section-kicker">Citation</p>
+          <h2>Build on Ladders of Thought.</h2>
+        </div>
+        <button class="copy-button" type="button" data-copy="bibtex"><span aria-hidden="true">⧉</span> Copy BibTeX</button>
+      </div>
+      <pre id="bibtex"><code>@misc{liu2026laddersthought,
+  title         = {Ladders of Thought: A Self-Evolving Curriculum of Progressively Simplified Reasoning Traces},
+  author        = {Minghui Liu and Thomas Magelinski and Dehao Yuan and Qi Yu and Furong Huang},
+  year          = {2026},
+  eprint        = {2609.25643},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI},
+  url           = {https://arxiv.org/abs/2609.25643}
+}</code></pre>
+    </section>
+  </main>
+
+  <footer>
+    <div class="section-shell footer-grid">
+      <div><strong>Ladders of Thought</strong><span>University of Maryland, College Park · Capital One</span></div>
+      <a href="mailto:minghui@umd.edu">minghui@umd.edu</a>
+      <a href="#top">Back to top ↑</a>
+    </div>
+  </footer>
+
+  <div class="toast" role="status" aria-live="polite">BibTeX copied</div>
+  <script src="script.js"></script>
+</body>
+</html>
